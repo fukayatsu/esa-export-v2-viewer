@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title><%= [@post['category'], @post['title']].compact.join('/') %></title>
+    <link rel="stylesheet" href="/css/styles.css">
+  </head>
+  <body>
+    <a href="/">TOP</a>
+    <hr>
+    <%= @content_html %>
+  </body>
+</html>
