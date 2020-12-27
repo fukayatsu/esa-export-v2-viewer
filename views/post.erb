@@ -2,12 +2,18 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <title><%= [@post['category'], @post['title']].compact.join('/') %></title>
+    <title><%= full_title(@post) %></title>
     <link rel="stylesheet" href="/css/styles.css">
   </head>
   <body>
     <a href="/">TOP</a>
+    <h1><%= full_title(@post) %></h1>
+    <div class="last-update">
+      Last update: <%= @post['updated_at'] %>
+    </div>
     <hr>
-    <%= @content_html %>
+    <div class="content">
+      <%= @content_html %>
+    </div>
   </body>
 </html>

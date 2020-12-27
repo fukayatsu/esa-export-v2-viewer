@@ -42,7 +42,7 @@ Zip::File.open(posts_zip) do |zip_file|
         'published' => !post['wip'],
         'path' =>  path,
         'content' => post['body_md']
-      }.merge(post.slice('created_at', 'updated_at', 'number'))
+      }.merge(post.slice('created_at', 'updated_at', 'category', 'tags', 'number'))
     end
   rescue
     puts "[warning] parse failure: #{path}"
@@ -63,6 +63,15 @@ files_zips.each do |files_zip|
       # files["2020/12/25/1/foo.png"] = "zip_files/esa_foo_md_v2_2020-12-26_09-39-46_files_0.zip"
       files[entry.name.split('/', 2).last] = files_zip
     end
+  end
+end
+
+### helpers ###
+
+helpers do
+  def full_title(post)
+    title = [post['category'], post['title']].compact.join('/')
+    [title, post['tags'].map { |t| "##{t}" }.join(' ')].compact.join(' ')
   end
 end
 

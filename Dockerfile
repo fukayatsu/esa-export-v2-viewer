@@ -7,6 +7,7 @@ RUN mkdir /app
 WORKDIR /app
 
 ADD Gemfile Gemfile.lock ./
+RUN bundle config set without development
 RUN bundle install --jobs=4 --retry=3
 ADD . ./
 

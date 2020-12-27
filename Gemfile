@@ -11,4 +11,6 @@ gem "puma"
 gem "rubyzip"
 gem "sinatra"
 
-gem 'pry'
+group :development do
+  gem 'pry'
+end
