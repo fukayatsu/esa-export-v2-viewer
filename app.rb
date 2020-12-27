@@ -41,7 +41,8 @@ Zip::File.open(posts_zip) do |zip_file|
         'title' => post['name'],
         'published' => !post['wip'],
         'path' =>  path,
-        'content' => post['body_md']
+        'content' => post['body_md'],
+        'comments' => parsed["comments"]
       }.merge(post.slice('created_at', 'updated_at', 'category', 'tags', 'number'))
     end
   rescue
@@ -70,8 +71,18 @@ end
 
 helpers do
   def full_title(post)
+    tags = post['tags']
+    tags = tags.split(',').map(&:strip).compact if tags.is_a?(String)
     title = [post['category'], post['title']].compact.join('/')
-    [title, post['tags'].map { |t| "##{t}" }.join(' ')].compact.join(' ')
+    [title, tags&.map { |t| "##{t}" }&.join(' ')].compact.join(' ')
+  end
+
+  def to_html(md_text)
+    CommonMarker.render_doc(
+      md_text,
+      %i[DEFAULT FOOTNOTES STRIKETHROUGH_DOUBLE_TILDE VALIDATE_UTF8],
+      %i[table strikethrough autolink]
+    ).to_html(%i[DEFAULT HARDBREAKS UNSAFE SOURCEPOS TABLE_PREFER_STYLE_ATTRIBUTES])
   end
 end
 
@@ -85,13 +96,6 @@ end
 get '/posts/:id' do
   @post = posts[params[:id].to_i]
   return "Not Found" unless @post
-
-  doc = CommonMarker.render_doc(
-    @post['content'],
-    %i[DEFAULT FOOTNOTES STRIKETHROUGH_DOUBLE_TILDE VALIDATE_UTF8],
-    %i[table strikethrough autolink]
-  )
-  @content_html = doc.to_html(%i[DEFAULT HARDBREAKS UNSAFE SOURCEPOS TABLE_PREFER_STYLE_ATTRIBUTES])
 
   erb :post
 end

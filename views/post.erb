@@ -12,8 +12,24 @@
       Last update: <%= @post['updated_at'] %>
     </div>
     <hr>
-    <div class="content">
-      <%= @content_html %>
+    <div class="content markdown">
+      <%= to_html(@post['content']) %>
     </div>
+    <hr>
+    <% if @post['comments'] %>
+      <div class="comments">
+        <h3>Comments (<%= @post['comments'].size %>)</h3>
+        <ul>
+          <% @post['comments'].each do |comment| %>
+            <li>
+              <%= comment['created_by']['screen_name'] %> (<%= comment['created_at'] %>)
+
+              <div class="comment markdown">
+                <%= to_html comment['body_md'] %>
+              </div>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
   </body>
 </html>

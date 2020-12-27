@@ -2,6 +2,23 @@ body {
   max-width: 800px;
 }
 
-img {
+.markdown img {
   max-width: 800px;
+}
+
+.markdown blockquote {
+  margin: 0;
+  margin-bottom: 16px;
+  margin-top: 0;
+  border-left: .25em solid #dfe2e5;
+  color: #6a737d;
+  padding: 0 1em;
+}
+
+.markdown blockquote>:first-child {
+  margin-top: 0;
+}
+
+.markdown blockquote>:last-child {
+  margin-bottom: 0;
 }
