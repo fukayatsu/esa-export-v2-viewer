@@ -1,9 +1,12 @@
 require 'sinatra'
 require 'commonmarker'
 require 'front_matter_parser'
+require 'json'
 require 'zip'
 require 'mimemagic'
 require 'mimemagic/overlay'
+
+### Load posts ###
 
 front_matter_parser = FrontMatterParser::Parser.new(
   :md,
@@ -27,17 +30,27 @@ Zip::File.open(posts_zip) do |zip_file|
     next unless entry.file?
 
     path = '/' + entry.name
-    parsed = front_matter_parser.call(entry.get_input_stream.read.force_encoding('UTF-8'))
-    posts[parsed['number']] =
-      parsed.front_matter.merge(
+    content = entry.get_input_stream.read.force_encoding('UTF-8')
+    if export_format == :markdown
+      parsed = front_matter_parser.call(content)
+      posts[parsed['number']] = parsed.front_matter.merge('path' =>  path, 'content' => parsed.content)
+    elsif export_format == :json
+      parsed = JSON.parse(content)
+      post = parsed["post"]
+      posts[post['number']] = {
+        'title' => post['name'],
+        'published' => !post['wip'],
         'path' =>  path,
-        'content' => parsed.content
-      )
+        'content' => post['body_md']
+      }.merge(post.slice('created_at', 'updated_at', 'number'))
+    end
   rescue
     puts "[warning] parse failure: #{path}"
   end
 end
 posts = posts.sort.to_h
+
+### Index attachment files ###
 
 files = {}
 files_zips = Dir.glob('zip_files/*_files_*.zip').sort.select { |path| path.match?(/files_\d+\.zip$/) }.each(&:freeze)
@@ -53,6 +66,7 @@ files_zips.each do |files_zip|
   end
 end
 
+### Routes ###
 
 get '/' do
   @posts = posts
