@@ -1,8 +1,11 @@
 # esa-export-v2-viewer
 
+Supported formats:
+- export v2 (markdown)
+- export v2 (json)
 # Usage
 
-1. Download exported zip files to `zip_files` on current directory
+1. Download all exported zip files into `zip_files` folder on current directory
   ```
   zip_files
     ├── esa_foo-team_md_v2_2020-12-26_09-39-46_posts.zip
@@ -17,5 +20,10 @@
 # Development
 
 - `docker build -t esa-export-v2-viewer .`
-- `docker tag esa-export-v2-viewer fukayatsu/esa-export-v2-viewer:0.0.1`
-- `docker push fukayatsu/esa-export-v2-viewer:0.0.1`
+- `docker run --rm -it -p 4567:4567 -v $PWD/zip_files:/app/zip_files esa-export-v2-viewer`
+
+
+## (Push to docker hub)
+
+- `docker tag esa-export-v2-viewer $USER/esa-export-v2-viewer:0.0.1`
+- `docker push $USER/esa-export-v2-viewer:0.0.1`
